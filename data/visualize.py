@@ -6,7 +6,7 @@ from matplotlib import gridspec
 import keyboard
 import time
 
-FOLDER = "ARC-AGI-2/data/evaluation"
+FOLDER = "data/training"
 
 COLOR_MAP = [
     "#000000", "#0074D9", "#FF4136", "#2ECC40", "#FFDC00",
@@ -43,7 +43,7 @@ def show_file(json_data, file_name, train_idx, file_idx, file_count):
     draw_grid(ax2, sample["output"], "Output")
 
     plt.suptitle(
-        f"File: {file_name} ({file_idx+1}/{file_count})   |   Train Sample: {train_idx+1}/{len(trains)}",
+        f"File: {file_name} ({file_idx+1}/{file_count})",
         fontsize=16
     )
     plt.pause(0.01)
