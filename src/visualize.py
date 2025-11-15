@@ -6,7 +6,7 @@ from matplotlib import gridspec
 import keyboard
 import time
 
-FOLDER = "data/training"
+FOLDER = "../data/training"
 
 COLOR_MAP = [
     "#000000", "#0074D9", "#FF4136", "#2ECC40", "#FFDC00",
