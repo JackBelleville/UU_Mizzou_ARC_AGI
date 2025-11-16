@@ -10,7 +10,7 @@ import torch
 # --------------------------
 # IMPORT YOUR CNN MODEL
 # --------------------------
-from torch_model import SmallUNet  # adjust path if needed
+from torch_model import SmallUNet  # adjust if your file is elsewhere
 
 # --------------------------
 # CNN CONFIG
@@ -24,7 +24,7 @@ PAD_SIZE = 30
 # --------------------------
 MODEL = SmallUNet().to(DEVICE)
 MODEL.load_state_dict(torch.load("best_arc_cnn.pth", map_location=DEVICE))
-MODEL.eval()
+MODEL.eval()  # important: evaluation mode
 
 # --------------------------
 # Data folder
@@ -39,6 +39,7 @@ COLOR_MAP = [
 # --------------------------
 # Utility functions
 # --------------------------
+
 def load_files(folder):
     files = [f for f in os.listdir(folder) if f.endswith(".json")]
     files.sort()
@@ -49,20 +50,11 @@ def load_json(path):
         return json.load(f)
 
 def draw_grid(ax, grid, title):
-    ax.imshow(np.array(grid), cmap=plt.matplotlib.colors.ListedColormap(COLOR_MAP), interpolation='nearest')
+    grid = np.array(grid)
+    ax.imshow(grid, cmap=plt.matplotlib.colors.ListedColormap(COLOR_MAP), interpolation='nearest')
     ax.set_title(title, fontsize=14)
     ax.set_xticks([])
     ax.set_yticks([])
-
-def compute_correctness(pred_grid, true_grid):
-    """
-    Returns 1.0 if the prediction grid exactly matches the ground truth, else 0.0
-    """
-    pred = np.array(pred_grid)
-    true = np.array(true_grid)
-    H, W = true.shape
-    pred = pred[:H, :W]
-    return 1.0 if np.array_equal(pred, true) else 0.0
 
 # --------------------------
 # Make prediction using CNN
@@ -77,15 +69,18 @@ def make_prediction(model, input_grid, output_grid):
 
     with torch.no_grad():
         logits = model(x)  # (1, C, PAD_SIZE, PAD_SIZE)
-        pred = logits.argmax(dim=1).squeeze(0).cpu().numpy()
+        pred = logits.argmax(dim=1).squeeze(0).cpu().numpy()  # (PAD_SIZE, PAD_SIZE)
 
+    # Crop to output size
     target_h, target_w = np.array(output_grid).shape
-    return pred[:target_h, :target_w]
+    pred_cropped = pred[:target_h, :target_w]
+
+    return pred_cropped
 
 # --------------------------
 # Show input / prediction / output
 # --------------------------
-def show_file(json_data, file_name, train_idx, file_idx, file_count, running_stats):
+def show_file(json_data, file_name, train_idx, file_idx, file_count):
     trains = json_data["train"]
     sample = trains[train_idx]
 
@@ -93,23 +88,20 @@ def show_file(json_data, file_name, train_idx, file_idx, file_count, running_sta
     out = sample["output"]
     pred = make_prediction(MODEL, inp, out)
 
-    correctness = compute_correctness(pred, out)
-    running_stats["total"] += 1
-    running_stats["correct"] += correctness
-
     plt.clf()
-    gs = gridspec.GridSpec(1, 3, width_ratios=[1,1,1])
-    draw_grid(plt.subplot(gs[0]), inp, "Input")
-    draw_grid(plt.subplot(gs[1]), pred, "Prediction")
-    draw_grid(plt.subplot(gs[2]), out, "Ground Truth")
+    gs = gridspec.GridSpec(1, 3, width_ratios=[1, 1, 1])
 
-    accuracy_percent = (running_stats["correct"] / running_stats["total"]) * 100
+    ax1 = plt.subplot(gs[0])
+    draw_grid(ax1, inp, "Input")
+
+    ax2 = plt.subplot(gs[1])
+    draw_grid(ax2, pred, "Prediction")
+
+    ax3 = plt.subplot(gs[2])
+    draw_grid(ax3, out, "Ground Truth")
 
     plt.suptitle(
-        f"File: {file_name} ({file_idx+1}/{file_count}) | "
-        f"Sample: {train_idx+1}/{len(trains)} | "
-        f"Exact match: {'Yes' if correctness==1.0 else 'No'} | "
-        f"Running accuracy: {accuracy_percent:.1f}%",
+        f"File: {file_name} ({file_idx+1}/{file_count}) | Train sample {train_idx+1}/{len(trains)}",
         fontsize=15
     )
     plt.pause(0.01)
@@ -122,9 +114,7 @@ def main():
     file_idx = 0
     train_idx = 0
 
-    running_stats = {"total": 0, "correct": 0}
-
-    plt.figure(figsize=(14,5))
+    plt.figure(figsize=(14, 5))
     plt.ion()
 
     while True:
@@ -134,7 +124,7 @@ def main():
 
         train_idx %= len(data["train"])
 
-        show_file(data, file_name, train_idx, file_idx, len(files), running_stats)
+        show_file(data, file_name, train_idx, file_idx, len(files))
 
         # Keyboard navigation
         if keyboard.is_pressed("right"):
@@ -156,13 +146,6 @@ def main():
             time.sleep(0.15)
 
         elif keyboard.is_pressed("q"):
-            # Print final overall correctness
-            if running_stats["total"] > 0:
-                overall_accuracy = (running_stats["correct"] / running_stats["total"]) * 100
-                print(f"\nFinal Overall Exact Match Accuracy: {overall_accuracy:.2f}% "
-                      f"({int(running_stats['correct'])}/{running_stats['total']})")
-            else:
-                print("\nNo samples were evaluated.")
             plt.close()
             break
 
