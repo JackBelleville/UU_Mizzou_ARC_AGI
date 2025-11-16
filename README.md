@@ -2,6 +2,8 @@
 
 This repository contains our work for the Mizzou ARC AGI Challenge, where we explore multiple approaches for solving ARC (Abstraction and Reasoning Corpus) tasks.
 
+-------------------------------------------------------------------------------------------------------------------
+
 🚀 Project Overview
 
 The ARC challenge evaluates an AI system’s ability to perform abstract reasoning using very small, grid-based tasks. Each task consists of:
@@ -11,6 +13,7 @@ A set of input–output training examples
 One or more test inputs for which the model must predict the correct output transformation
 
 -------------------------------------------------------------------------------------------------------------------
+
 This repository includes:
 
 A custom SmallUNet convolutional model for early experiments
@@ -54,9 +57,7 @@ LLM-generated predictions
 
 Ground truth target
 
-Correctness count per task
-
-Final summary accuracy across the entire dataset
+Final accuracy summary across the entire dataset
 
 This is used to diagnose reasoning errors and refine the prompting strategy.
 
