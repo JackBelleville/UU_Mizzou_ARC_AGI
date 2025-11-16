@@ -7,7 +7,7 @@ import torch
 from torch_model import SmallUNet, pad_to_30
 
 # -------------------------- Config --------------------------
-FOLDER = "../data/predictions"   # folder with prediction JSONs
+FOLDER = "../data/predictions(evaluation)"   # folder with prediction JSONs
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 PAD_SIZE = 30
 NUM_COLORS = 10

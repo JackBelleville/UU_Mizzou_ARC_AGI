@@ -54,7 +54,7 @@ def save_predictions_per_file(inputs, predictions, truths=None, out_path=None):
 # -----------------------------
 # Predict folder
 # -----------------------------
-def predict_folder(input_folder="../data/curveball", output_folder="../data/predictions"):
+def predict_folder(input_folder="../data/evaluation", output_folder="../data/predictions(evaluation)"):
     input_folder = Path(input_folder)
     output_folder = Path(output_folder)
     output_folder.mkdir(parents=True, exist_ok=True)
