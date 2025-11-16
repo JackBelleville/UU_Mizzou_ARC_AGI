@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import sys
 
-FOLDER = "../data/example_submission"
+FOLDER = "../data/training"
 
 COLOR_MAP = [
     "#000000", "#0074D9", "#FF4136", "#2ECC40", "#FFDC00",
