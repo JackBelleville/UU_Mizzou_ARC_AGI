@@ -10,6 +10,7 @@ A set of input–output training examples
 
 One or more test inputs for which the model must predict the correct output transformation
 
+-------------------------------------------------------------------------------------------------------------------
 This repository includes:
 
 A custom SmallUNet convolutional model for early experiments
@@ -19,6 +20,8 @@ An LLM-based solver capable of inferencing transformation rules
 Utility scripts for visualization and evaluation
 
 Metric tracking for correctness, based on comparison between predicted assumptions and ground-truth transformations
+
+-------------------------------------------------------------------------------------------------------------------
 
 🧠 LLM-Based Solver
 
@@ -37,8 +40,9 @@ Correctness is measured as:
 
 (# of correct assumptions) / (total assumptions)
 
-
 At the end of the run, the script prints the overall percentage accuracy across all tasks.
+
+-------------------------------------------------------------------------------------------------------------------
 
 🎨 Visualizer
 
@@ -56,6 +60,8 @@ Final summary accuracy across the entire dataset
 
 This is used to diagnose reasoning errors and refine the prompting strategy.
 
+-------------------------------------------------------------------------------------------------------------------
+
 🧪 Classical Model Experiments
 
 Early experiments used a simple UNet-style CNN.
@@ -71,6 +77,7 @@ Troubleshooting PyTorch state_dict mismatches
 
 These models were eventually replaced by the LLM-based approach due to limited performance on ARC’s abstract reasoning patterns.
 
+-------------------------------------------------------------------------------------------------------------------
 
 📊 Evaluation
 
@@ -84,6 +91,8 @@ Final correctness % across tasks
 
 This allows us to measure how well the LLM generalizes abstract rules from only a handful of examples.
 
+-------------------------------------------------------------------------------------------------------------------
+
 🔧 Setup & Usage
 
 Install dependencies:
@@ -93,6 +102,8 @@ pip install -r requirements.txt
 Run LLM solver with visualization:
 
 python src/prediction_enabled_visualizer.py
+
+-------------------------------------------------------------------------------------------------------------------
 
 🏆 Goal
 
